@@ -1,4 +1,4 @@
-{% set version = "23.4.11" %}
+{% set version = "24.10.17" %}
 
 package:
   name: vnu-validator
@@ -7,7 +7,7 @@ package:
 source:
   # building from source is... untenable due to sh/py/ant/java/git sandwich
   - url: https://registry.npmjs.org/vnu-jar/-/vnu-jar-{{ version }}.tgz
-    sha256: cbba595a86d680d48e9c5261a16d9ef409e5658ad8aa47081c593690a652cf0f
+    sha256: 4617d3e3234a40efce2eb42fa9c0fcc8abf85c33fffb8825bfd77563209d43b0
   # this is _not_ distributed on npm
   - fn: CREDITS-{{ version }}
     url: https://raw.githubusercontent.com/validator/validator/{{ version }}/CREDITS
