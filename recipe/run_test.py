@@ -186,6 +186,7 @@ def a_vnu_client_http_args(an_unused_port: int):
         for p in alive:
             p.kill()
             p.wait()
+        time.sleep(5)
 
     atexit.register(stop)
 
@@ -201,6 +202,11 @@ def _indent_some(**label_text):
 
 
 if __name__ == "__main__":
-    with tempfile.TemporaryDirectory() as td:
-        os.chdir(td)
-        sys.exit(pytest.main(PYTEST_ARGS))
+    td = Path(tempfile.mkdtemp())
+    old_cwd = Path.cwd()
+    os.chdir(f"{td}")
+    rc = pytest.main(PYTEST_ARGS)
+    os.chdir(f"{old_cwd}")
+    shutil.rmtree(td, ignore_errors=True)
+    sys.exit()
+    sys.exit(rc)
