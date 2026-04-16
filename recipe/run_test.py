@@ -1,14 +1,26 @@
 import os
-from subprocess import Popen, PIPE
+from subprocess import PIPE
+from psutil import Popen, wait_procs, NoSuchProcess
+import atexit
 import pytest
+import contextlib
 import re
 import sys
 import shutil
 import time
+import tempfile
 import textwrap
 import socket
 from urllib.request import urlopen
 from pathlib import Path
+
+PYTEST_ARGS = [
+    "-vv",
+    "--color=yes",
+    __file__,
+    "--html=pytest.html",
+    "--self-contained-html",
+]
 
 WIN = os.name == "nt"
 
@@ -99,7 +111,7 @@ def vnu(
             expect_stdout = expect_stderr
             expect_stderr = None
     str_args = list(map(str, [*vnu_args, *args]))
-    print("\t".join(str_args))
+    print(f"vnu args: {str_args}")
     proc = Popen(str_args, stdout=PIPE, stderr=PIPE, **UTF8)
     stdout, stderr = proc.communicate()
     proc.wait()
@@ -134,6 +146,7 @@ def a_vnu_client_http_args(an_unused_port: int):
         "nu.validator.servlet.Main",
         str(an_unused_port),
     ]
+    print(f"server_args: {server_args}")
     server = Popen(server_args)
 
     retries = 5
@@ -142,7 +155,7 @@ def a_vnu_client_http_args(an_unused_port: int):
 
     time.sleep(5)
 
-    for retry in range(retries):
+    for _ in range(retries):
         try:
             urlopen(f"http://{host}:{an_unused_port}/", timeout=10)
             started = True
@@ -161,9 +174,25 @@ def a_vnu_client_http_args(an_unused_port: int):
         "nu.validator.client.HttpClient",
     ]
 
+    def stop():
+        procs: Popen = []
+        with contextlib.suppress(NoSuchProcess):
+            procs = [*server.children(), server]
+        if not procs:
+            return
+        for p in procs:
+            p.terminate()
+        _, alive = wait_procs(procs, timeout=3)
+        for p in alive:
+            p.kill()
+            p.wait()
+        time.sleep(5)
+
+    atexit.register(stop)
+
     yield client_args
-    server.terminate()
-    server.kill()
+
+    stop()
 
 
 def _indent_some(**label_text):
@@ -173,4 +202,11 @@ def _indent_some(**label_text):
 
 
 if __name__ == "__main__":
-    pytest.main(["-vv", "--color=yes", __file__])
+    td = Path(tempfile.mkdtemp())
+    old_cwd = Path.cwd()
+    os.chdir(f"{td}")
+    rc = pytest.main(PYTEST_ARGS)
+    os.chdir(f"{old_cwd}")
+    shutil.rmtree(td, ignore_errors=True)
+    sys.exit()
+    sys.exit(rc)
