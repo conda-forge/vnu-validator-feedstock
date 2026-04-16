@@ -10,6 +10,8 @@ import socket
 from urllib.request import urlopen
 from pathlib import Path
 
+PYTEST_ARGS = ["-vv", "--color=yes", __file__, "--html=pytest.html", "--self-contained-html"]
+
 WIN = os.name == "nt"
 
 UTF8 = dict(encoding="utf-8")
@@ -173,4 +175,4 @@ def _indent_some(**label_text):
 
 
 if __name__ == "__main__":
-    pytest.main(["-vv", "--color=yes", __file__])
+    sys.exit(pytest.main(PYTEST_ARGS))
