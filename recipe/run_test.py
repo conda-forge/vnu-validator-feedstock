@@ -5,6 +5,7 @@ import re
 import sys
 import shutil
 import time
+import tempfile
 import textwrap
 import socket
 from urllib.request import urlopen
@@ -182,4 +183,6 @@ def _indent_some(**label_text):
 
 
 if __name__ == "__main__":
-    sys.exit(pytest.main(PYTEST_ARGS))
+    with tempfile.TemporaryDirectory() as td:
+        os.chdir(td)
+        sys.exit(pytest.main(PYTEST_ARGS))
