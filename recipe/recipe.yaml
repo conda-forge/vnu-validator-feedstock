@@ -37,6 +37,7 @@ tests:
       run:
         - python >=3.11
         - pytest-html
+        - psutil
         - openjdk ${{ openjdk_check_min }}.*
     script:
       file: run_test.py

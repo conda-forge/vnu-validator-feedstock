@@ -1,6 +1,9 @@
 import os
-from subprocess import Popen, PIPE
+from subprocess import PIPE
+from psutil import Popen, wait_procs, NoSuchProcess
+import atexit
 import pytest
+import contextlib
 import re
 import sys
 import shutil
@@ -152,7 +155,7 @@ def a_vnu_client_http_args(an_unused_port: int):
 
     time.sleep(5)
 
-    for retry in range(retries):
+    for _ in range(retries):
         try:
             urlopen(f"http://{host}:{an_unused_port}/", timeout=10)
             started = True
@@ -171,10 +174,24 @@ def a_vnu_client_http_args(an_unused_port: int):
         "nu.validator.client.HttpClient",
     ]
 
+    def stop():
+        procs: Popen = []
+        with contextlib.suppress(NoSuchProcess):
+            procs = [*server.children(), server]
+        if not procs:
+            return
+        for p in procs:
+            p.terminate()
+        _, alive = wait_procs(procs, timeout=3)
+        for p in alive:
+            p.kill()
+            p.wait()
+
+    atexit.register(stop)
+
     yield client_args
-    server.terminate()
-    server.kill()
-    server.wait()
+
+    stop()
 
 
 def _indent_some(**label_text):
