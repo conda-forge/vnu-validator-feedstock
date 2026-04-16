@@ -3,6 +3,7 @@ schema_version: 1
 
 context:
   version: "26.4.16"
+  openjdk_min: "8"
 
 package:
   name: vnu-validator
@@ -26,13 +27,16 @@ build:
 requirements:
   run:
     - __${{ noarch_platform }}
-    - openjdk >=8
+    - openjdk >=${{ openjdk_min }}
 
 tests:
   - requirements:
       run:
         - python >=3.11
         - pytest
+        - openjdk ${{ openjdk_min }}.*
+    script:
+      file: run_test.py
 
 about:
   license: MIT
