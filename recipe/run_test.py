@@ -10,7 +10,13 @@ import socket
 from urllib.request import urlopen
 from pathlib import Path
 
-PYTEST_ARGS = ["-vv", "--color=yes", __file__, "--html=pytest.html", "--self-contained-html"]
+PYTEST_ARGS = [
+    "-vv",
+    "--color=yes",
+    __file__,
+    "--html=pytest.html",
+    "--self-contained-html",
+]
 
 WIN = os.name == "nt"
 
@@ -101,7 +107,7 @@ def vnu(
             expect_stdout = expect_stderr
             expect_stderr = None
     str_args = list(map(str, [*vnu_args, *args]))
-    print("\t".join(str_args))
+    print(f"vnu args: {str_args}")
     proc = Popen(str_args, stdout=PIPE, stderr=PIPE, **UTF8)
     stdout, stderr = proc.communicate()
     proc.wait()
@@ -136,6 +142,7 @@ def a_vnu_client_http_args(an_unused_port: int):
         "nu.validator.servlet.Main",
         str(an_unused_port),
     ]
+    print(f"server_args: {server_args}")
     server = Popen(server_args)
 
     retries = 5
