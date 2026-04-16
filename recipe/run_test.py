@@ -174,6 +174,7 @@ def a_vnu_client_http_args(an_unused_port: int):
     yield client_args
     server.terminate()
     server.kill()
+    server.wait()
 
 
 def _indent_some(**label_text):
