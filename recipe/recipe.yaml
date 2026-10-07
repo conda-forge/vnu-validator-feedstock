@@ -33,6 +33,12 @@ requirements:
     - openjdk >=${{ openjdk_min }}
 
 tests:
+  - package_contents:
+      strict: true
+      bin:
+        - vnu
+      lib:
+        - vnu.jar
   - requirements:
       run:
         - python >=3.11
