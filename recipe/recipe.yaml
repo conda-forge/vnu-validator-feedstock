@@ -37,8 +37,8 @@ tests:
       strict: true
       bin:
         - vnu
-      lib:
-        - vnu.jar
+      files:
+        - ${{ "Library/" if win }}lib/vnu.jar
   - requirements:
       run:
         - python >=3.11
