@@ -2,7 +2,7 @@
 schema_version: 1
 
 context:
-  version: "26.10.6"
+  version: "26.10.7"
   openjdk_min: "11"
   # some weird memory stack overflow issues on 11 which
   # see https://github.com/validator/validator/issues/2073
@@ -15,7 +15,7 @@ package:
 source:
   # building from source is... untenable due to sh/py/ant/java/git sandwich
   - url: https://registry.npmjs.org/vnu-jar/-/vnu-jar-${{ version }}.tgz
-    sha256: 095bd0af6026348229564cd629d96fca1698d3fdd5326612e7effcb8273a1990
+    sha256: 614febae1f8d303cbf7cbd3e63f892a8a2afbd162c6e4edc6a2ed565c4e733f2
   # this is _not_ distributed on npm
   - url: https://raw.githubusercontent.com/validator/validator/${{ version }}/CREDITS
     sha256: b7f78e603da0e9aa19adb63a3c12af5c8c16e40c43ac115a017cc7ed2517e9fb
