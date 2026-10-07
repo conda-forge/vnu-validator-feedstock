@@ -35,9 +35,8 @@ requirements:
 tests:
   - package_contents:
       strict: true
-      bin:
-        - vnu
       files:
+        - ${{ "Library/" if win }}bin/vnu${{ ".cmd" if win }}
         - ${{ "Library/" if win }}lib/vnu.jar
   - requirements:
       run:
